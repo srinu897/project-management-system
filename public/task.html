@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Task Management System</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+:root{
+    --bg:#0f172a;
+    --sidebar:#111827;
+    --card:#1e293b;
+    --primary:#6366f1;
+    --secondary:#8b5cf6;
+    --success:#10b981;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --text:#f8fafc;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+
+body{
+
+    background:
+    linear-gradient(
+        135deg,
+        #0f172a,
+        #1e1b4b,
+        #312e81
+    );
+
+    min-height:100vh;
+    color:white;
+}
+
+.dashboard{
+    display:flex;
+    min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+
+    width:280px;
+
+    background:
+    linear-gradient(
+        180deg,
+        #111827,
+        #1f2937
+    );
+
+    position:fixed;
+
+    height:100vh;
+
+    padding:30px;
+
+    border-right:
+    1px solid rgba(255,255,255,.1);
+}
+
+.logo{
+
+    text-align:center;
+
+    margin-bottom:50px;
+}
+
+.logo h2{
+
+    color:#818cf8;
+
+    font-size:30px;
+}
+
+.logo p{
+
+    color:#94a3b8;
+}
+
+.menu{
+
+    list-style:none;
+}
+
+.menu li{
+
+    margin-bottom:15px;
+}
+
+.menu a{
+
+    color:white;
+
+    text-decoration:none;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:15px 18px;
+
+    border-radius:16px;
+
+    transition:.3s;
+}
+
+.menu a:hover{
+
+    background:#6366f1;
+
+    transform:
+    translateX(8px);
+}
+
+/* MAIN CONTENT */
+
+.content{
+
+    margin-left:280px;
+
+    flex:1;
+
+    padding:30px;
+}
+
+/* HERO */
+
+.hero{
+
+    background:
+    linear-gradient(
+        135deg,
+        #6366f1,
+        #8b5cf6
+    );
+
+    padding:40px;
+
+    border-radius:28px;
+
+    margin-bottom:30px;
+
+    box-shadow:
+    0 20px 50px
+    rgba(99,102,241,.4);
+}
+
+.hero h1{
+
+    font-size:38px;
+
+    margin-bottom:10px;
+}
+
+.hero p{
+
+    opacity:.9;
+}
+
+/* TOPBAR */
+
+.topbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+}
+
+.search-box{
+
+    width:400px;
+
+    padding:15px 18px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:#1e293b;
+
+    color:white;
+
+    outline:none;
+}
+
+.profile{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+}
+
+.avatar{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    background:#6366f1;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+}
+
+/* STATS */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+    margin-bottom:30px;
+}
+
+.stat-card{
+
+    background:
+    rgba(255,255,255,.08);
+
+    backdrop-filter:
+    blur(20px);
+
+    border-radius:24px;
+
+    padding:25px;
+
+    border:
+    1px solid rgba(255,255,255,.1);
+
+    transition:.3s;
+}
+
+.stat-card:hover{
+
+    transform:
+    translateY(-8px);
+}
+
+.stat-card h3{
+
+    color:#cbd5e1;
+
+    font-size:15px;
+}
+
+.stat-card p{
+
+    margin-top:10px;
+
+    font-size:34px;
+
+    font-weight:700;
+}
+
+/* TASK FORM */
+
+.task-form-card{
+
+    background:
+    rgba(255,255,255,.08);
+
+    backdrop-filter:
+    blur(20px);
+
+    border-radius:28px;
+
+    padding:30px;
+
+    margin-bottom:30px;
+
+    border:
+    1px solid rgba(255,255,255,.1);
+}
+
+.task-form-card form{
+
+    display:grid;
+
+    grid-template-columns:
+    2fr 2fr 1fr auto;
+
+    gap:15px;
+
+    margin-top:20px;
+}
+
+.task-form-card input,
+.task-form-card select{
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:#1e293b;
+
+    color:white;
+
+    outline:none;
+}
+
+.task-form-card button{
+
+    background:
+    linear-gradient(
+        135deg,
+        #6366f1,
+        #8b5cf6
+    );
+
+    border:none;
+
+    color:white;
+
+    border-radius:16px;
+
+    padding:14px 22px;
+
+    cursor:pointer;
+
+    font-weight:600;
+}
+
+.section-title{
+
+    margin-bottom:20px;
+}
+
+/* KANBAN BOARD */
+
+.kanban{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(3,1fr);
+
+    gap:20px;
+}
+
+.column{
+
+    background:
+    rgba(255,255,255,.08);
+
+    backdrop-filter:
+    blur(20px);
+
+    border-radius:24px;
+
+    padding:20px;
+
+    border:
+    1px solid rgba(255,255,255,.1);
+
+    min-height:500px;
+}
+
+.column h2{
+
+    margin-bottom:20px;
+
+    text-align:center;
+}
+
+.task-card{
+
+    background:#1e293b;
+
+    border-radius:18px;
+
+    padding:18px;
+
+    margin-bottom:15px;
+
+    transition:.3s;
+}
+
+.task-card:hover{
+
+    transform:
+    translateY(-5px);
+}
+
+.task-card h4{
+
+    margin-bottom:10px;
+}
+
+.task-card p{
+
+    color:#cbd5e1;
+
+    margin-bottom:12px;
+}
+
+.status{
+
+    display:inline-block;
+
+    padding:8px 14px;
+
+    border-radius:25px;
+
+    font-size:13px;
+
+    font-weight:600;
+}
+
+.pending{
+    background:#f59e0b;
+}
+
+.in-progress{
+    background:#3b82f6;
+}
+
+.completed{
+    background:#10b981;
+}
+
+.delete-btn{
+
+    width:100%;
+
+    margin-top:15px;
+
+    padding:10px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#ef4444;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+@media(max-width:1200px){
+
+    .kanban{
+        grid-template-columns:1fr;
+    }
+
+    .task-form-card form{
+        grid-template-columns:1fr;
+    }
+
+    .search-box{
+        width:100%;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <h2>🚀 PMS</h2>
+            <p>Project Management System</p>
+        </div>
+
+        <ul class="menu">
+
+            <li>
+                <a href="project_dashboard.html">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a href="task.html">
+                    <i class="fa-solid fa-list-check"></i>
+                    Tasks
+                </a>
+            </li>
+
+            <li>
+                <a href="upload_document.html">
+                    <i class="fa-solid fa-folder-open"></i>
+                    Documents
+                </a>
+            </li>
+
+            <li>
+                <a href="about.html">
+                    <i class="fa-solid fa-circle-info"></i>
+                    About
+                </a>
+            </li>
+
+        </ul>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="content">
+
+        <!-- HERO -->
+
+        <div class="hero">
+
+            <h1>
+                Task Management 🚀
+            </h1>
+
+            <p>
+                Track, organize and complete tasks efficiently.
+            </p>
+
+        </div>
+
+        <!-- SEARCH + PROFILE -->
+
+        <div class="topbar">
+
+            <input
+                type="search"
+                id="searchTask"
+                class="search-box"
+                placeholder="Search Tasks...">
+
+            <div class="profile">
+
+                <div class="avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <span>
+                    Samala Srinivas
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- STATISTICS -->
+
+        <div class="stats">
+
+            <div class="stat-card">
+
+                <h3>
+                    📋 Total Tasks
+                </h3>
+
+                <p id="totalTasks">
+                    0
+                </p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h3>
+                    ⏳ Pending
+                </h3>
+
+                <p id="pendingTasksCount">
+                    0
+                </p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h3>
+                    🚀 In Progress
+                </h3>
+
+                <p id="progressTasksCount">
+                    0
+                </p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h3>
+                    ✅ Completed
+                </h3>
+
+                <p id="completedTasksCount">
+                    0
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- ADD TASK -->
+
+        <div class="task-form-card">
+
+            <div class="section-title">
+
+                <h2>
+                    Create New Task
+                </h2>
+
+                <p>
+                    Organize and manage work effectively.
+                </p>
+
+            </div>
+
+            <form id="taskForm">
+
+                <input
+                    type="text"
+                    id="taskName"
+                    placeholder="Task Name"
+                    required>
+
+                <input
+                    type="text"
+                    id="assignedTo"
+                    placeholder="Assigned To"
+                    required>
+
+                <select id="status">
+
+                    <option value="Pending">
+                        Pending
+                    </option>
+
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Completed">
+                        Completed
+                    </option>
+
+                </select>
+
+                <button type="submit">
+                    ➕ Add Task
+                </button>
+
+            </form>
+
+        </div>
+
+        <!-- KANBAN BOARD -->
+
+        <div class="kanban">
+
+            <!-- PENDING -->
+
+            <div class="column">
+
+                <h2>
+                    ⏳ Pending
+                </h2>
+
+                <div id="pendingTasks">
+
+                </div>
+
+            </div>
+
+            <!-- IN PROGRESS -->
+
+            <div class="column">
+
+                <h2>
+                    🚀 In Progress
+                </h2>
+
+                <div id="progressTasks">
+
+                </div>
+
+            </div>
+
+            <!-- COMPLETED -->
+
+            <div class="column">
+
+                <h2>
+                    ✅ Completed
+                </h2>
+
+                <div id="completedTasks">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+let tasks = [];
+
+/* ==========================
+   FETCH TASKS
+========================== */
+
+async function fetchTasks(){
+
+    try{
+
+        const response =
+        await fetch(
+            "http://localhost:8089/tasks"
+        );
+
+        tasks =
+        await response.json();
+
+        renderTasks(tasks);
+
+        updateStats();
+
+    }
+    catch(error){
+
+        console.error(
+            "Error fetching tasks:",
+            error
+        );
+
+    }
+
+}
+
+/* ==========================
+   RENDER TASKS
+========================== */
+
+function renderTasks(taskData){
+
+    const pendingContainer =
+    document.getElementById(
+        "pendingTasks"
+    );
+
+    const progressContainer =
+    document.getElementById(
+        "progressTasks"
+    );
+
+    const completedContainer =
+    document.getElementById(
+        "completedTasks"
+    );
+
+    pendingContainer.innerHTML = "";
+    progressContainer.innerHTML = "";
+    completedContainer.innerHTML = "";
+
+    taskData.forEach(task => {
+
+        const taskCard = document.createElement("div");
+
+        taskCard.className =
+        "task-card";
+
+        let statusClass =
+        "pending";
+
+        if(task.status === "In Progress")
+            statusClass =
+            "in-progress";
+
+        if(task.status === "Completed")
+            statusClass =
+            "completed";
+
+        taskCard.innerHTML = `
+
+        <h4>
+            ${task.task_name}
+        </h4>
+
+        <p>
+            Assigned To:
+            ${task.assigned_to}
+        </p>
+
+        <span
+        class="status ${statusClass}">
+
+            ${task.status}
+
+        </span>
+
+        <button
+        class="delete-btn"
+        onclick="deleteTask(${task.id})">
+
+            Delete Task
+
+        </button>
+
+        `;
+
+        if(task.status === "Pending"){
+
+            pendingContainer.appendChild(
+                taskCard
+            );
+
+        }
+
+        else if(
+            task.status ===
+            "In Progress"
+        ){
+
+            progressContainer.appendChild(
+                taskCard
+            );
+
+        }
+
+        else{
+
+            completedContainer.appendChild(
+                taskCard
+            );
+
+        }
+
+    });
+
+}
+
+/* ==========================
+   ADD TASK
+========================== */
+
+document
+.getElementById("taskForm")
+.addEventListener(
+"submit",
+async function(event){
+
+    event.preventDefault();
+
+    const taskName =
+    document
+    .getElementById(
+        "taskName"
+    )
+    .value
+    .trim();
+
+    const assignedTo =
+    document
+    .getElementById(
+        "assignedTo"
+    )
+    .value
+    .trim();
+
+    const status =
+    document
+    .getElementById(
+        "status"
+    )
+    .value;
+
+    if(
+        !taskName ||
+        !assignedTo
+    ){
+
+        alert(
+            "Please fill all fields"
+        );
+
+        return;
+    }
+
+    try{
+
+        await fetch(
+            "http://localhost:8089/tasks",
+            {
+
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                    "application/json"
+                },
+
+                body:JSON.stringify({
+
+                    task_name:
+                    taskName,
+
+                    assigned_to:
+                    assignedTo,
+
+                    status:
+                    status
+
+                })
+
+            }
+        );
+
+        document
+        .getElementById(
+            "taskForm"
+        )
+        .reset();
+
+        fetchTasks();
+
+    }
+    catch(error){
+
+        console.error(
+            "Add Task Error:",
+            error
+        );
+
+    }
+
+});
+
+/* ==========================
+   DELETE TASK
+========================== */
+
+async function deleteTask(id){
+
+    const confirmDelete =
+    confirm(
+        "Delete this task?"
+    );
+
+    if(!confirmDelete)
+        return;
+
+    try{
+
+        await fetch(
+
+            `http://localhost:8089/tasks/${id}`,
+
+            {
+                method:"DELETE"
+            }
+
+        );
+
+        fetchTasks();
+
+    }
+    catch(error){
+
+        console.error(
+            "Delete Error:",
+            error
+        );
+
+    }
+
+}
+
+/* ==========================
+   UPDATE STATS
+========================== */
+
+function updateStats(){
+
+    const total =
+    tasks.length;
+
+    const pending =
+    tasks.filter(
+    task =>
+    task.status ===
+    "Pending"
+    ).length;
+
+    const progress =
+    tasks.filter(
+    task =>
+    task.status ===
+    "In Progress"
+    ).length;
+
+    const completed =
+    tasks.filter(
+    task =>
+    task.status ===
+    "Completed"
+    ).length;
+
+    document
+    .getElementById(
+        "totalTasks"
+    )
+    .innerText =
+    total;
+
+    document
+    .getElementById(
+        "pendingTasksCount"
+    )
+    .innerText =
+    pending;
+
+    document
+    .getElementById(
+        "progressTasksCount"
+    )
+    .innerText =
+    progress;
+
+    document
+    .getElementById(
+        "completedTasksCount"
+    )
+    .innerText =
+    completed;
+
+}
+
+/* ==========================
+   SEARCH TASKS
+========================== */
+
+document
+.getElementById(
+    "searchTask"
+)
+.addEventListener(
+"input",
+function(){
+
+    const value =
+    this.value
+    .toLowerCase();
+
+    const filtered =
+    tasks.filter(task =>
+
+        task.task_name
+        .toLowerCase()
+        .includes(value)
+
+        ||
+
+        task.assigned_to
+        .toLowerCase()
+        .includes(value)
+
+    );
+
+    renderTasks(filtered);
+
+});
+
+/* ==========================
+   INITIAL LOAD
+========================== */
+
+fetchTasks();
+
+</script>
+
+</body>
+</html>

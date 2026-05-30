@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>About Project</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+:root{
+    --bg:#0f172a;
+    --sidebar:#111827;
+    --card:#1e293b;
+    --primary:#6366f1;
+    --secondary:#8b5cf6;
+    --success:#10b981;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --text:#f8fafc;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+
+body{
+    background:
+    linear-gradient(
+        135deg,
+        #0f172a,
+        #1e1b4b,
+        #312e81
+    );
+
+    min-height:100vh;
+    color:white;
+}
+
+.dashboard{
+    display:flex;
+    min-height:100vh;
+}
+
+.sidebar{
+    width:280px;
+    background:
+    linear-gradient(
+        180deg,
+        #111827,
+        #1f2937
+    );
+
+    position:fixed;
+    height:100vh;
+    padding:30px;
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:50px;
+}
+
+.logo h2{
+    color:#818cf8;
+}
+
+.menu{
+    list-style:none;
+}
+
+.menu li{
+    margin-bottom:15px;
+}
+
+.menu a{
+    color:white;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:15px;
+    border-radius:16px;
+    transition:.3s;
+}
+
+.menu a:hover{
+    background:#6366f1;
+    transform:translateX(8px);
+}
+
+.content{
+    margin-left:280px;
+    flex:1;
+    padding:30px;
+}
+
+.hero{
+    background:
+    linear-gradient(
+        135deg,
+        #6366f1,
+        #8b5cf6
+    );
+
+    padding:40px;
+    border-radius:28px;
+    margin-bottom:30px;
+}
+
+.hero h1{
+    font-size:40px;
+    margin-bottom:10px;
+}
+
+.section{
+
+    background:
+    rgba(255,255,255,.08);
+
+    backdrop-filter:
+    blur(20px);
+
+    border-radius:24px;
+
+    padding:30px;
+
+    margin-bottom:25px;
+
+    border:
+    1px solid rgba(255,255,255,.1);
+}
+
+.tech-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(200px,1fr));
+
+    gap:20px;
+}
+
+.tech-card{
+
+    background:#1e293b;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    text-align:center;
+}
+
+.tech-card i{
+
+    font-size:40px;
+
+    margin-bottom:15px;
+
+    color:#818cf8;
+}
+
+.contact-links a{
+
+    color:white;
+
+    text-decoration:none;
+
+    display:block;
+
+    margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <h2>🚀 PMS</h2>
+
+            <p>
+                Project Management System
+            </p>
+
+        </div>
+
+        <ul class="menu">
+
+            <li>
+
+                <a href="project_dashboard.html">
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                    Dashboard
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="task.html">
+
+                    <i class="fa-solid fa-list-check"></i>
+
+                    Tasks
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="upload_document.html">
+
+                    <i class="fa-solid fa-folder-open"></i>
+
+                    Documents
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="about.html">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    About
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="content">
+
+        <!-- HERO -->
+
+        <div class="hero">
+
+            <h1>
+                About Project 🚀
+            </h1>
+
+            <p>
+                Enterprise Project Management System designed for
+                project tracking, task collaboration, document
+                management, and productivity enhancement.
+            </p>
+
+        </div>
+
+        <!-- PROJECT OVERVIEW -->
+
+        <div class="section">
+
+            <h2>
+                📖 Project Overview
+            </h2>
+
+            <br>
+
+            <p>
+
+                The Project Management System is a full-stack web
+                application that helps organizations and teams manage
+                projects, tasks, and documents from a centralized
+                dashboard.
+
+                It provides project tracking, task assignment,
+                document storage, analytics, and collaboration tools
+                to improve productivity and workflow management.
+
+            </p>
+
+        </div>
+
+        <!-- TECH STACK -->
+
+        <div class="section">
+
+            <h2>
+                💻 Technology Stack
+            </h2>
+
+            <br>
+
+            <div class="tech-grid">
+
+                <div class="tech-card">
+
+                    <i class="fa-brands fa-html5"></i>
+
+                    <h3>HTML5</h3>
+
+                    <p>Frontend Structure</p>
+
+                </div>
+
+                <div class="tech-card">
+
+                    <i class="fa-brands fa-css3-alt"></i>
+
+                    <h3>CSS3</h3>
+
+                    <p>Modern UI Design</p>
+
+                </div>
+
+                <div class="tech-card">
+
+                    <i class="fa-brands fa-js"></i>
+
+                    <h3>JavaScript</h3>
+
+                    <p>Client Side Logic</p>
+
+                </div>
+
+                <div class="tech-card">
+
+                    <i class="fa-brands fa-node-js"></i>
+
+                    <h3>Node.js</h3>
+
+                    <p>Backend Development</p>
+
+                </div>
+
+                <div class="tech-card">
+
+                    <i class="fa-solid fa-server"></i>
+
+                    <h3>Express.js</h3>
+
+                    <p>REST API Services</p>
+
+                </div>
+
+                <div class="tech-card">
+
+                    <i class="fa-solid fa-database"></i>
+
+                    <h3>MySQL</h3>
+
+                    <p>Database Management</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FEATURES -->
+
+        <div class="section">
+
+            <h2>
+                ✨ Key Features
+            </h2>
+
+            <br>
+
+            <ul style="line-height:2; padding-left:25px;">
+
+                <li>
+                    Project Dashboard Management
+                </li>
+
+                <li>
+                    Task Tracking & Assignment
+                </li>
+
+                <li>
+                    Kanban Task Board
+                </li>
+
+                <li>
+                    Document Upload & Storage
+                </li>
+
+                <li>
+                    Project Analytics
+                </li>
+
+                <li>
+                    Search & Filter Functionality
+                </li>
+
+                <li>
+                    Responsive Design
+                </li>
+
+                <li>
+                    Secure Database Integration
+                </li>
+
+            </ul>
+
+        </div>
+
+        <!-- DEVELOPER PROFILE -->
+
+        <div class="section">
+
+            <h2>
+                👨‍💻 Developer Profile
+            </h2>
+
+            <br>
+
+            <p>
+
+                <strong>Name:</strong>
+                Samala Srinivas
+
+            </p>
+
+            <br>
+
+            <p>
+
+                Computer Science & Engineering Graduate passionate
+                about Full Stack Development, Software Engineering,
+                Cloud Technologies, and AI-powered applications.
+
+            </p>
+
+            <br>
+
+            <div class="contact-links">
+
+                <a href="https://linkedin.com/in/samala-srinivas"
+                   target="_blank">
+
+                    🔗 LinkedIn Profile
+
+                </a>
+
+                <a href="https://github.com/srinu897"
+                   target="_blank">
+
+                    🔗 GitHub Profile
+
+                </a>
+
+                <a href="mailto:samalasrinivas372@gmail.com">
+
+                    📧 samalasrinivas372@gmail.com
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- SYSTEM ARCHITECTURE -->
+
+        <div class="section">
+
+            <h2>
+                🏗 System Architecture
+            </h2>
+
+            <br>
+
+            <div class="tech-grid">
+
+                <div class="tech-card">
+
+                    <i class="fa-solid fa-desktop"></i>
+
+                    <h3>Frontend</h3>
+
+                    <p>
+                        HTML5, CSS3,
+                        JavaScript
+                    </p>
+
+                </div>
+
+                <div class="tech-card">
+
+                    <i class="fa-solid fa-gears"></i>
+
+                    <h3>Backend</h3>
+
+                    <p>
+                        Node.js,
+                        Express.js
+                    </p>
+
+                </div>
+
+                <div class="tech-card">
+
+                    <i class="fa-solid fa-database"></i>
+
+                    <h3>Database</h3>
+
+                    <p>
+                        MySQL
+                    </p>
+
+                </div>
+
+                <div class="tech-card">
+
+                    <i class="fa-solid fa-cloud"></i>
+
+                    <h3>Storage</h3>
+
+                    <p>
+                        Document Upload
+                        Module
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- PROJECT HIGHLIGHTS -->
+
+        <div class="section">
+
+            <h2>
+                📊 Project Highlights
+            </h2>
+
+            <br>
+
+            <div class="tech-grid">
+
+                <div class="tech-card">
+
+                    <i class="fa-solid fa-folder-tree"></i>
+
+                    <h3>Projects</h3>
+
+                    <p>
+                        Manage and monitor
+                        multiple projects
+                    </p>
+
+                </div>
+
+                <div class="tech-card">
+
+                    <i class="fa-solid fa-list-check"></i>
+
+                    <h3>Tasks</h3>
+
+                    <p>
+                        Kanban based task
+                        management
+                    </p>
+
+                </div>
+
+                <div class="tech-card">
+
+                    <i class="fa-solid fa-file-arrow-up"></i>
+
+                    <h3>Documents</h3>
+
+                    <p>
+                        Secure file upload
+                        and storage
+                    </p>
+
+                </div>
+
+                <div class="tech-card">
+
+                    <i class="fa-solid fa-chart-column"></i>
+
+                    <h3>Analytics</h3>
+
+                    <p>
+                        Dashboard insights
+                        and statistics
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FUTURE ENHANCEMENTS -->
+
+        <div class="section">
+
+            <h2>
+                🚀 Future Enhancements
+            </h2>
+
+            <br>
+
+            <ul style="line-height:2; padding-left:25px;">
+
+                <li>
+                    JWT Authentication
+                </li>
+
+                <li>
+                    Role Based Access Control
+                </li>
+
+                <li>
+                    Team Collaboration Features
+                </li>
+
+                <li>
+                    Project Deadline Tracking
+                </li>
+
+                <li>
+                    Email Notifications
+                </li>
+
+                <li>
+                    Real-Time Updates using Socket.io
+                </li>
+
+                <li>
+                    Cloud Storage Integration
+                </li>
+
+                <li>
+                    React Frontend Migration
+                </li>
+
+            </ul>
+
+        </div>
+
+        <!-- FOOTER -->
+
+        <div class="section"
+             style="text-align:center;">
+
+            <h2>
+                Thank You For Visiting
+            </h2>
+
+            <br>
+
+            <p>
+
+                Built with ❤️ by
+                <strong>
+                    Samala Srinivas
+                </strong>
+
+            </p>
+
+            <br>
+
+            <p>
+
+                Project Management System
+                © 2024
+
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>
