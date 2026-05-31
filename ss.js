@@ -22,12 +22,55 @@ const pool = new Pool({
     }
 });
 
-pool.connect()
-    .then(() => console.log("✅ Connected to PostgreSQL"))
-    .catch(err => {
-        console.error("❌ Database connection error:", err);
-        process.exit(1);
-    });
+(async () => {
+    try {
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(255) NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                phone VARCHAR(20),
+                password VARCHAR(255) NOT NULL,
+                otp VARCHAR(6),
+                otpExpires BIGINT
+            );
+        `);
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS projects (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                description TEXT NOT NULL,
+                status VARCHAR(20) NOT NULL
+            );
+        `);
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS tasks (
+                id SERIAL PRIMARY KEY,
+                task_name VARCHAR(255) NOT NULL,
+                assigned_to VARCHAR(255) NOT NULL,
+                status VARCHAR(30) DEFAULT 'Pending'
+            );
+        `);
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS files (
+                id SERIAL PRIMARY KEY,
+                filename VARCHAR(255) NOT NULL,
+                filepath VARCHAR(255) NOT NULL
+            );
+        `);
+
+        console.log("✅ All tables created successfully");
+
+    } catch (err) {
+
+        console.error("Table Creation Error:", err);
+
+    }
+})();
 
 // Serve HTML Pages
 app.get("/", (req, res) => res.redirect("/signup"));
@@ -57,12 +100,20 @@ app.post("/signup", async (req, res) => {
         res.redirect("/login");
 
     } catch (err) {
-        console.error(err);
 
-        res.status(500).json({
-            message: "❌ Error signing up."
+    console.error("Signup Error:", err);
+
+    if (err.code === "23505") {
+        return res.status(400).json({
+            message: "Email already exists!"
         });
     }
+
+    res.status(500).json({
+        message: "Error signing up."
+    });
+
+}
 });
 
 // ✅ LOGIN
