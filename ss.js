@@ -1,5 +1,5 @@
 const express = require("express");
-const mysql = require("mysql");
+const { Pool } = require("pg");
 const cors = require("cors");
 const path = require("path");
 const multer = require("multer");
@@ -15,20 +15,19 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 
 // MySQL Connection
-const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
-connection.connect((err) => {
-    if (err) {
+pool.connect()
+    .then(() => console.log("✅ Connected to PostgreSQL"))
+    .catch(err => {
         console.error("❌ Database connection error:", err);
         process.exit(1);
-    }
-    console.log("✅ Connected to MySQL database!");
-});
+    });
 
 // Serve HTML Pages
 app.get("/", (req, res) => res.redirect("/signup"));
@@ -40,123 +39,228 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.get("/about", (req, res) => res.sendFile(path.join(__dirname, "public", "about.html")));
 
 // ✅ SIGNUP
-app.post("/signup", (req, res) => {
-    const { username, email, phone, password } = req.body;
-    if (!username || !email || !phone || !password) {
-        return res.status(400).json({ message: "❌ All fields are required!" });
-    }
+app.post("/signup", async (req, res) => {
+    try {
+        const { username, email, phone, password } = req.body;
 
-    const sql = "INSERT INTO users (username, email, phone, password) VALUES (?, ?, ?, ?)";
-    connection.query(sql, [username, email, phone, password], (err) => {
-        if (err) {
-            console.error("⚠️ Signup Error:", err);
-            return res.status(500).json({ message: "❌ Error signing up." });
+        if (!username || !email || !phone || !password) {
+            return res.status(400).json({
+                message: "❌ All fields are required!"
+            });
         }
-        console.log("✅ User signed up successfully!");
+
+        await pool.query(
+            "INSERT INTO users (username, email, phone, password) VALUES ($1,$2,$3,$4)",
+            [username, email, phone, password]
+        );
+
         res.redirect("/login");
-    });
+
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            message: "❌ Error signing up."
+        });
+    }
 });
 
 // ✅ LOGIN
-app.post("/login", (req, res) => {
-    const { email, pswd } = req.body;
-    if (!email || !pswd) {
-        return res.status(400).json({ message: "❌ Email and password are required!" });
+app.post("/login", async (req, res) => {
+
+    try {
+
+        const { email, pswd } = req.body;
+
+        const result = await pool.query(
+            "SELECT * FROM users WHERE email = $1",
+            [email]
+        );
+
+        if (
+            result.rows.length > 0 &&
+            pswd === result.rows[0].password
+        ) {
+
+            return res.redirect("/project_dashboard");
+
+        }
+
+        res.status(401).send(
+            "<script>alert('Invalid email or password!'); window.location.href='/login';</script>"
+        );
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            message: "Login Error"
+        });
+
     }
 
-    const sql = "SELECT * FROM users WHERE email = ?";
-    connection.query(sql, [email], (err, result) => {
-        if (err) {
-            console.error("⚠️ Login Error:", err);
-            return res.status(500).json({ message: "❌ Error logging in." });
-        }
-        if (result.length > 0 && pswd === result[0].password) {
-            console.log("✅ Login successful!");
-            return res.redirect("/project_dashboard");
-        }
-        console.log("❌ Invalid credentials!");
-        res.status(401).send("<script>alert('Invalid email or password!'); window.location.href='/login';</script>");
-    });
 });
 
 // ✅ GET ALL PROJECTS
-app.get("/projects", (req, res) => {
-    connection.query("SELECT * FROM projects", (err, results) => {
-        if (err) {
-            console.error("⚠️ Fetching Projects Error:", err);
-            return res.status(500).json({ message: "❌ Error fetching projects." });
-        }
-        res.json(results);
-    });
+app.get("/projects", async (req, res) => {
+
+    try {
+
+        const result =
+            await pool.query(
+                "SELECT * FROM projects"
+            );
+
+        res.json(result.rows);
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            message: "Error fetching projects"
+        });
+
+    }
+
 });
 
 // ✅ ADD NEW PROJECT
-app.post("/projects", (req, res) => {
-    const { name, description, status } = req.body;
-    if (!name || !description || !status) {
-        return res.status(400).json({ message: "❌ All fields are required!" });
+app.post("/projects", async (req, res) => {
+
+    try {
+
+        const { name, description, status } = req.body;
+
+        await pool.query(
+            "INSERT INTO projects(name,description,status) VALUES($1,$2,$3)",
+            [name, description, status]
+        );
+
+        res.json({
+            message: "Project added successfully"
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            message: "Failed to add project"
+        });
+
     }
 
-    const sql = "INSERT INTO projects (name, description, status) VALUES (?, ?, ?)";
-    connection.query(sql, [name, description, status], (err) => {
-        if (err) {
-            console.error("⚠️ MySQL Insert Error:", err);
-            return res.status(500).json({ message: "❌ Failed to add project." });
-        }
-        res.json({ message: "✅ Project added successfully!" });
-    });
 });
 
 // ✅ DELETE PROJECT
-app.delete("/projects/:id", (req, res) => {
-    const { id } = req.params;
-    connection.query("DELETE FROM projects WHERE id = ?", [id], (err) => {
-        if (err) {
-            console.error("⚠️ Delete Error:", err);
-            return res.status(500).json({ message: "❌ Error deleting project." });
-        }
-        res.json({ message: "✅ Project deleted successfully!" });
-    });
+app.delete("/projects/:id", async (req, res) => {
+
+    try {
+
+        await pool.query(
+            "DELETE FROM projects WHERE id=$1",
+            [req.params.id]
+        );
+
+        res.json({
+            message: "Project deleted successfully"
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            message: "Delete Error"
+        });
+
+    }
+
 });
 
 // ✅ FETCH ALL TASKS
-app.get("/tasks", (req, res) => {
-    connection.query("SELECT * FROM tasks", (err, results) => {
-        if (err) {
-            console.error("❌ Error fetching tasks:", err);
-            return res.status(500).json({ error: "Error fetching tasks" });
-        }
-        res.json(results);
-    });
+// ✅ FETCH ALL TASKS
+app.get("/tasks", async (req, res) => {
+    try {
+        const result = await pool.query(
+            "SELECT * FROM tasks ORDER BY id DESC"
+        );
+
+        res.json(result.rows);
+
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            error: "Error fetching tasks"
+        });
+    }
 });
 
 // ✅ ADD A NEW TASK
-app.post("/tasks", (req, res) => {
-    const { task_name, assigned_to, status } = req.body;
-    if (!task_name || !assigned_to) {
-        return res.status(400).json({ error: "Task Name and Assigned To are required" });
-    }
+app.post("/tasks", async (req, res) => {
 
-    const query = "INSERT INTO tasks (task_name, assigned_to, status) VALUES (?, ?, ?)";
-    connection.query(query, [task_name, assigned_to, status], (err, result) => {
-        if (err) {
-            console.error("❌ Error adding task:", err);
-            return res.status(500).json({ error: "Error adding task" });
+    try {
+
+        const { task_name, assigned_to, status } = req.body;
+
+        if (!task_name || !assigned_to) {
+            return res.status(400).json({
+                error: "Task Name and Assigned To are required"
+            });
         }
-        res.json({ id: result.insertId, task_name, assigned_to, status });
-    });
+
+        const result = await pool.query(
+            `INSERT INTO tasks
+            (task_name, assigned_to, status)
+            VALUES ($1,$2,$3)
+            RETURNING id`,
+            [task_name, assigned_to, status]
+        );
+
+        res.json({
+            id: result.rows[0].id,
+            task_name,
+            assigned_to,
+            status
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            error: "Error adding task"
+        });
+
+    }
 });
 
-// ✅ DELETE A TASK
-app.delete("/tasks/:id", (req, res) => {
-    const taskId = req.params.id;
-    connection.query("DELETE FROM tasks WHERE id = ?", [taskId], (err, result) => {
-        if (err) {
-            console.error("❌ Error deleting task:", err);
-            return res.status(500).json({ error: "Error deleting task" });
-        }
-        res.json({ message: "Task deleted successfully" });
-    });
+// ✅ DELETE TASK
+app.delete("/tasks/:id", async (req, res) => {
+
+    try {
+
+        await pool.query(
+            "DELETE FROM tasks WHERE id=$1",
+            [req.params.id]
+        );
+
+        res.json({
+            message: "Task deleted successfully"
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            error: "Error deleting task"
+        });
+
+    }
 });
 
 
@@ -252,122 +356,72 @@ limits: {
 // ===============================
 
 app.post(
-"/upload",
-upload.single("file"),
-(req, res) => {
+    "/upload",
+    upload.single("file"),
+    async (req, res) => {
 
-    try {
+        try {
 
-        if (!req.file) {
+            if (!req.file) {
+                return res.status(400).json({
+                    success: false,
+                    message: "No file uploaded"
+                });
+            }
 
-            return res.status(400).json({
+            const filename = req.file.originalname;
+            const filepath = `uploads/${req.file.filename}`;
 
+            const result = await pool.query(
+                `INSERT INTO files
+                (filename, filepath)
+                VALUES ($1,$2)
+                RETURNING id`,
+                [filename, filepath]
+            );
+
+            res.json({
+                success: true,
+                message: "File uploaded successfully",
+                fileId: result.rows[0].id
+            });
+
+        } catch (err) {
+
+            console.error(err);
+
+            res.status(500).json({
                 success: false,
-
-                message:
-                "No file uploaded"
-
+                message: "Database error"
             });
 
         }
 
-        const filename =
-            req.file.originalname;
-
-        const filepath =
-            `uploads/${req.file.filename}`;
-
-        connection.query(
-
-            "INSERT INTO files (filename, filepath) VALUES (?, ?)",
-
-            [filename, filepath],
-
-            (err, result) => {
-
-                if (err) {
-
-                    console.error(
-                        "Database Error:",
-                        err
-                    );
-
-                    return res.status(500).json({
-
-                        success: false,
-
-                        message:
-                        "Database error"
-
-                    });
-
-                }
-
-                res.json({
-
-                    success: true,
-
-                    message:
-                    "✅ File uploaded successfully",
-
-                    fileId:
-                    result.insertId
-
-                });
-
-            }
-
-        );
-
     }
-    catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-
-            success: false,
-
-            message:
-            error.message
-
-        });
-
-    }
-
-}
-
-
 );
-
 // ===============================
 // GET FILES
 // ===============================
 
-app.get("/files", (req, res) => {
+app.get("/files", async (req, res) => {
 
-connection.query(
+    try {
 
-    "SELECT * FROM files ORDER BY id DESC",
+        const result = await pool.query(
+            "SELECT * FROM files ORDER BY id DESC"
+        );
 
-    (err, results) => {
+        res.json(result.rows);
 
-        if (err) {
+    } catch (err) {
 
-            return res.status(500).json({
+        console.error(err);
 
-                message:
-                "Database error"
-
-            });
-
-        }
-
-        res.json(results);
+        res.status(500).json({
+            message: "Database error"
+        });
 
     }
-
-);
 
 });
 
@@ -375,82 +429,48 @@ connection.query(
 // DELETE FILE
 // ===============================
 
-app.delete("/delete/:id", (req, res) => {
-const fileId = req.params.id;
+app.delete("/delete/:id", async (req, res) => {
 
-connection.query(
+    try {
 
-    "SELECT * FROM files WHERE id=?",
-
-    [fileId],
-
-    (err, results) => {
-
-        if (
-            err ||
-            results.length === 0
-        ) {
-
-            return res.status(404).json({
-
-                message:
-                "File not found"
-
-            });
-
-        }
-
-        const filePath =
-            path.join(
-                __dirname,
-                results[0].filepath
-            );
-
-        connection.query(
-
-            "DELETE FROM files WHERE id=?",
-
-            [fileId],
-
-            (err) => {
-
-                if (err) {
-
-                    return res.status(500).json({
-
-                        message:
-                        "Database error"
-
-                    });
-
-                }
-
-                if (
-                    fs.existsSync(
-                        filePath
-                    )
-                ) {
-
-                    fs.unlinkSync(
-                        filePath
-                    );
-
-                }
-
-                res.json({
-
-                    message:
-                    "✅ File deleted successfully"
-
-                });
-
-            }
-
+        const result = await pool.query(
+            "SELECT * FROM files WHERE id=$1",
+            [req.params.id]
         );
 
-    }
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                message: "File not found"
+            });
+        }
 
-);
+        const filePath = path.join(
+            __dirname,
+            result.rows[0].filepath
+        );
+
+        await pool.query(
+            "DELETE FROM files WHERE id=$1",
+            [req.params.id]
+        );
+
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+
+        res.json({
+            message: "File deleted successfully"
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            message: "Database error"
+        });
+
+    }
 
 });
 
