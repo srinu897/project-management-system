@@ -646,6 +646,9 @@ body{
 
 <script>
 
+const API_URL =
+"https://project-management-system-twzj.onrender.com";
+
 let files = [];
 
 /* ==========================
@@ -683,7 +686,7 @@ async function uploadFile(){
         const response =
         await fetch(
 
-            "http://localhost:8089/upload",
+            `${API_URL}/upload`,
 
             {
 
@@ -728,7 +731,7 @@ async function loadFiles(){
 
         const response =
         await fetch(
-            "http://localhost:8089/files"
+            `${API_URL}/files`
         );
 
         files =
@@ -838,7 +841,7 @@ function renderFiles(fileData){
             <button
             class="view-btn"
             onclick="window.open(
-            'http://localhost:8089/${file.filepath}',
+            '${API_URL}/${file.filepath}',
             '_blank'
             )">
 
@@ -881,7 +884,7 @@ async function deleteFile(id){
         const response =
         await fetch(
 
-            `http://localhost:8089/delete/${id}`,
+            `${API_URL}/delete/${id}`,
 
             {
 
@@ -1011,6 +1014,5 @@ function(){
 loadFiles();
 
 </script>
-
 </body>
 </html>
