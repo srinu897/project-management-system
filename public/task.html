@@ -742,6 +742,9 @@ body{
 
 <script>
 
+const API_URL =
+"https://project-management-system-twzj.onrender.com";
+
 let tasks = [];
 
 /* ==========================
@@ -754,7 +757,7 @@ async function fetchTasks(){
 
         const response =
         await fetch(
-            "http://localhost:8089/tasks"
+            `${API_URL}/tasks`
         );
 
         tasks =
@@ -803,7 +806,8 @@ function renderTasks(taskData){
 
     taskData.forEach(task => {
 
-        const taskCard = document.createElement("div");
+        const taskCard =
+        document.createElement("div");
 
         taskCard.className =
         "task-card";
@@ -928,7 +932,7 @@ async function(event){
     try{
 
         await fetch(
-            "http://localhost:8089/tasks",
+            `${API_URL}/tasks`,
             {
 
                 method:"POST",
@@ -992,7 +996,7 @@ async function deleteTask(id){
 
         await fetch(
 
-            `http://localhost:8089/tasks/${id}`,
+            `${API_URL}/tasks/${id}`,
 
             {
                 method:"DELETE"
@@ -1116,6 +1120,5 @@ function(){
 fetchTasks();
 
 </script>
-
 </body>
 </html>

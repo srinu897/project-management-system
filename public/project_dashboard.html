@@ -346,8 +346,10 @@ body{
 
 </div>
 
-
 <script>
+
+const API_URL =
+"https://project-management-system-twzj.onrender.com";
 
 let projects = [];
 
@@ -355,7 +357,8 @@ async function fetchProjects(){
 
     try{
 
-        const response = await fetch("/projects");
+        const response =
+        await fetch(`${API_URL}/projects`);
 
         projects = await response.json();
 
@@ -401,22 +404,33 @@ async function fetchProjects(){
 
     }catch(error){
 
-        console.error(error);
+        console.error("Error fetching projects:", error);
 
     }
 }
 
 async function deleteProject(id){
 
-    await fetch(`/projects/${id}`,{
-        method:"DELETE"
-    });
+    try{
 
-    fetchProjects();
+        await fetch(
+            `${API_URL}/projects/${id}`,
+            {
+                method:"DELETE"
+            }
+        );
+
+        fetchProjects();
+
+    }catch(error){
+
+        console.error("Delete Error:", error);
+
+    }
 }
 
 document.getElementById("projectForm")
-.addEventListener("submit",async(e)=>{
+.addEventListener("submit", async (e)=>{
 
     e.preventDefault();
 
@@ -429,30 +443,41 @@ document.getElementById("projectForm")
     const status =
     document.getElementById("status").value;
 
-    await fetch("/projects",{
+    try{
 
-        method:"POST",
+        await fetch(
+            `${API_URL}/projects`,
+            {
 
-        headers:{
-            "Content-Type":"application/json"
-        },
+                method:"POST",
 
-        body:JSON.stringify({
-            name,
-            description,
-            status
-        })
+                headers:{
+                    "Content-Type":"application/json"
+                },
 
-    });
+                body:JSON.stringify({
+                    name,
+                    description,
+                    status
+                })
 
-    document.getElementById("projectForm").reset();
+            }
+        );
 
-    fetchProjects();
+        document.getElementById("projectForm").reset();
+
+        fetchProjects();
+
+    }catch(error){
+
+        console.error("Add Project Error:", error);
+
+    }
+
 });
 
 fetchProjects();
 
 </script>
-
 </body>
 </html>
