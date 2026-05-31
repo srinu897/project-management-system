@@ -4,6 +4,7 @@ const cors = require("cors");
 const path = require("path");
 const multer = require("multer");
 const fs = require("fs");
+const session = require("express-session");
 require("dotenv").config();
 
 const app = express();
@@ -11,6 +12,14 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    secret: "project_management_secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000
+    }
+}));
 app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -76,11 +85,45 @@ const pool = new Pool({
 app.get("/", (req, res) => res.redirect("/signup"));
 app.get("/signup", (req, res) => res.sendFile(path.join(__dirname, "public", "signup.html")));
 app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
-app.get("/project_dashboard", (req, res) => res.sendFile(path.join(__dirname, "public", "project_dashboard.html")));
-app.get("/task.html", (req, res) => res.sendFile(path.join(__dirname, "public", "task.html")));
+app.get(
+    "/project_dashboard",
+    isAuthenticated,
+    (req, res) =>
+        res.sendFile(
+            path.join(__dirname, "public", "project_dashboard.html")
+        )
+);
+app.get(
+    "/task.html",
+    isAuthenticated,
+    (req, res) =>
+        res.sendFile(
+            path.join(__dirname, "public", "task.html")
+        )
+);
+app.get(
+    "/upload_document.html",
+    isAuthenticated,
+    (req, res) =>
+        res.sendFile(
+            path.join(
+                __dirname,
+                "public",
+                "upload_document.html"
+            )
+        )
+);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.get("/about", (req, res) => res.sendFile(path.join(__dirname, "public", "about.html")));
+function isAuthenticated(req, res, next) {
 
+    if (req.session.user) {
+        return next();
+    }
+
+    return res.redirect("/login");
+
+}
 // ✅ SIGNUP
 app.post("/signup", async (req, res) => {
     try {
@@ -127,16 +170,19 @@ app.post("/login", async (req, res) => {
             "SELECT * FROM users WHERE email = $1",
             [email]
         );
-
         if (
-            result.rows.length > 0 &&
-            pswd === result.rows[0].password
-        ) {
+    result.rows.length > 0 &&
+    pswd === result.rows[0].password
+) {
 
-            return res.redirect("/project_dashboard");
+    req.session.user = {
+        id: result.rows[0].id,
+        email: result.rows[0].email
+    };
 
-        }
+    return res.redirect("/project_dashboard");
 
+}
         res.status(401).send(
             "<script>alert('Invalid email or password!'); window.location.href='/login';</script>"
         );
@@ -154,7 +200,7 @@ app.post("/login", async (req, res) => {
 });
 
 // ✅ GET ALL PROJECTS
-app.get("/projects", async (req, res) => {
+app.get("/projects", isAuthenticated, async (req, res) => {
 
     try {
 
@@ -178,7 +224,7 @@ app.get("/projects", async (req, res) => {
 });
 
 // ✅ ADD NEW PROJECT
-app.post("/projects", async (req, res) => {
+app.post("/projects", isAuthenticated, async (req, res) => {
 
     try {
 
@@ -206,7 +252,7 @@ app.post("/projects", async (req, res) => {
 });
 
 // ✅ DELETE PROJECT
-app.delete("/projects/:id", async (req, res) => {
+app.delete("/projects/:id", isAuthenticated, async (req, res) => {
 
     try {
 
@@ -232,8 +278,7 @@ app.delete("/projects/:id", async (req, res) => {
 });
 
 // ✅ FETCH ALL TASKS
-// ✅ FETCH ALL TASKS
-app.get("/tasks", async (req, res) => {
+app.get("/tasks", isAuthenticated, async (req, res) => {
     try {
         const result = await pool.query(
             "SELECT * FROM tasks ORDER BY id DESC"
@@ -251,7 +296,7 @@ app.get("/tasks", async (req, res) => {
 });
 
 // ✅ ADD A NEW TASK
-app.post("/tasks", async (req, res) => {
+app.post("/tasks", isAuthenticated, async (req, res) => {
 
     try {
 
@@ -290,7 +335,7 @@ app.post("/tasks", async (req, res) => {
 });
 
 // ✅ DELETE TASK
-app.delete("/tasks/:id", async (req, res) => {
+app.delete("/tasks/:id", isAuthenticated, async (req, res) => {
 
     try {
 
@@ -408,6 +453,7 @@ limits: {
 
 app.post(
     "/upload",
+    isAuthenticated,
     upload.single("file"),
     async (req, res) => {
 
@@ -454,7 +500,7 @@ app.post(
 // GET FILES
 // ===============================
 
-app.get("/files", async (req, res) => {
+app.get("/files", isAuthenticated, async (req, res) => {
 
     try {
 
@@ -480,8 +526,7 @@ app.get("/files", async (req, res) => {
 // DELETE FILE
 // ===============================
 
-app.delete("/delete/:id", async (req, res) => {
-
+app.delete("/delete/:id", isAuthenticated, async (req, res) => {
     try {
 
         const result = await pool.query(
@@ -534,5 +579,22 @@ app.use(
 express.static(uploadDir)
 );
 // Start Server
+app.get("/logout", (req, res) => {
+
+    req.session.destroy((err) => {
+
+        if (err) {
+            return res.status(500).send(
+                "Logout failed"
+            );
+        }
+
+        res.clearCookie("connect.sid");
+
+        res.redirect("/login");
+
+    });
+
+});
 const PORT = process.env.PORT || 8089;
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

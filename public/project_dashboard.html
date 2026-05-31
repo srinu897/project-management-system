@@ -270,6 +270,11 @@ body{
         <li><a href="task.html">✅ Tasks</a></li>
         <li><a href="upload_document.html">📁 Documents</a></li>
         <li><a href="about.html">ℹ️ About</a></li>
+	<li>
+    <a href="#" onclick="logout()">
+        🚪 Logout
+    </a>
+</li>
     </ul>
 
 </aside>
@@ -477,6 +482,16 @@ document.getElementById("projectForm")
 });
 
 fetchProjects();
+function logout() {
+
+    if (confirm("Logout?")) {
+
+        window.location.href =
+        "/logout";
+
+    }
+
+}
 
 </script>
 </body>

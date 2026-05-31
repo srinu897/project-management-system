@@ -532,6 +532,11 @@ body{
                     About
                 </a>
             </li>
+		<li>
+    <a href="#" onclick="logout()">
+        🚪 Logout
+    </a>
+</li>
 
         </ul>
 
@@ -1118,6 +1123,17 @@ function(){
 ========================== */
 
 fetchTasks();
+
+function logout() {
+
+    if (confirm("Logout?")) {
+
+        window.location.href =
+        "/logout";
+
+    }
+
+}
 
 </script>
 </body>

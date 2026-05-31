@@ -458,6 +458,12 @@ body{
 
             </li>
 
+	<li>
+    <a href="#" onclick="logout()">
+        🚪 Logout
+    </a>
+</li>
+
             <li>
 
                 <a href="task.html">
@@ -1012,6 +1018,17 @@ function(){
 ========================== */
 
 loadFiles();
+
+function logout() {
+
+    if (confirm("Logout?")) {
+
+        window.location.href =
+        "/logout";
+
+    }
+
+}
 
 </script>
 </body>
